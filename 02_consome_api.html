@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="card">  
+        <div class="card-body">
+
+            <div id="app">
+                        
+                <input type="button" v-on:click="GetProducts" value="Mostrar Produtos">                
+
+                <table class="table table-hover table-sm">
+                    <thead style="font-weight: bold;">
+                        <tr>
+                            <td>ID</td>
+                            <td>Name</td>
+                            <td>Price</td>                               
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="product in lista">
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.price }}</td>                   
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        
+        </div>
+    </div>  
+
+    
+    <script>          
+
+        new Vue({
+            el: "#app",
+            data: {  
+                lista: new Array(),                      
+            },
+            
+            methods: {
+                
+                GetProducts: function (events) {
+                    axios
+                        .get('http://localhost/DefaultApiAndUi/api/product')
+                        .then(response => (this.lista = response.data))        
+                        .catch(error => console.log(error))      
+                },               
+                
+            }
+        })      
+
+
+    </script>
+
+</body>
+</html>

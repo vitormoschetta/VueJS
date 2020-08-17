@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <div id="app-6">
+            <input v-model="message" placeholder="digite aqui">
+            {{ message }}
+        </div>
+
+        <hr>
+
+        <div>
+            <input type="text" v-model="variavel" /> 
+            <input type="text" v-model="variavel2"/>
+        </div>        
+        <p>
+            Soma Tempo Real:
+            <h4 v-if="variavel && variavel2">
+                {{parseInt(variavel) + parseInt(variavel2)}}
+            </h4>
+            <h4 v-else>
+                0
+            </h4>            
+        </p>   
+        
+        <hr>
+
+        <input type="button" v-on:click="EventoSoma" value="Soma ao clicar">
+        <br>
+        <h2>
+            {{ result }}
+        </h2>      
+        
+        <hr>
+
+        <ul v-for="item in listaFake">
+            <li>
+                {{ item.id }} {{ item.text }}                                
+            </li>
+
+        </ul>
+
+        <hr>
+                
+        <input type="button" v-on:click="GetProducts" value="Mostrar Produtos">
+
+        <table class="table table-hover table-sm">
+            <thead style="font-weight: bold;">
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Price</td>
+                    <td>Actions</td>                      
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr v-for="product in lista">
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>
+                        <router-link :to="{name: 'edit_product', params: { id: product.id }}" class="btn btn-primary">Edit</router-link>
+                        <router-link :to="{name: 'delete_product', params: { id: product.id }}" class="btn btn-danger">Delete</router-link>
+                        <input type="button" v-on:click="GetProduct($event, product.id)" value="Mostrar Produtos">
+                        <input type="button" v-on:click="GetProduct($event)" value="Create Product">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <hr>
+    
+        <p>
+           {{ product.id }} <br>
+           {{ product.name }} <br>
+           {{ product.price }} <br>
+        </p>
+
+
+        <div class="row">
+            <div class="col">
+                <input type="text" v-model="name">
+                <input type="text" v-model="price">                
+            </div>
+            <div class="col">
+                <input type="button" v-on:click="CreateProduct()" value="Create Product">
+            </div>
+        </div>
+    </div>
+ 
+    
+
+
+    <script>     
+
+    class Product 
+    {
+        name = null;
+        price = null;
+    }  
+
+        new Vue({
+            el: "#app",
+            data: {
+                message: null,
+                variavel: null,
+                variavel2: null,
+                result: null,     
+                lista: new Array(),
+                product: Product,
+                name: null,
+                price: null,
+                listaFake: [
+                    { id: 1, text: 'Aprender JavaScript' },
+                    { id: 2, text: 'Aprender Vue' },
+                    { id: 3, text: 'Criar algo incrível' }
+                ], 
+
+            },
+            
+            methods: {
+                EventoSoma: function (events){       
+                    if (this.variavel == null || this.variavel2 == null)
+                        this.result = "Informe os valores";
+                    else                                
+                        this.result = parseInt(this.variavel) + parseInt(this.variavel2);                                                                
+                },
+
+                GetProducts: function (events) {
+                    axios
+                        .get('http://localhost/DefaultApiAndUi/api/product')
+                        .then(response => (this.lista = response.data))        
+                        .catch(error => console.log(error))      
+                },
+
+                GetProduct: function (events, id) {
+                    axios
+                        .get('http://localhost/DefaultApiAndUi/api/product/' + id)
+                        .then(response => (this.product = response.data))        
+                        .catch(error => console.log(error))      
+                },
+
+                CreateProduct: function (events) {
+                    product = Product;
+                    product = {"name": this.name, "price": this.price}
+
+                    axios
+                        .post('http://localhost/DefaultApiAndUi/api/product/', product)
+                        .then(response => (this.product = response.data))        
+                        .catch(error => console.log(error))      
+                },
+
+            }
+        })      
+    
+
+    </script>
+
+</body>
+</html>

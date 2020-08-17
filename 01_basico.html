@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>    
+    <div class="card">  
+        <div class="card-body">
+            
+            <div id="app">
+                
+                <div id="app-6">
+                    <input v-model="message" placeholder="digite aqui">
+                    {{ message }}
+                </div>
+
+                <hr>
+
+                <div>
+                    <input type="text" v-model="variavel" /> 
+                    <input type="text" v-model="variavel2"/>
+                </div>        
+                <p>
+                    Soma Tempo Real:
+                    <h4 v-if="variavel && variavel2">
+                        {{parseInt(variavel) + parseInt(variavel2)}}
+                    </h4>
+                    <h4 v-else>
+                        0
+                    </h4>            
+                </p>   
+                
+                <hr>
+
+                <input type="button" v-on:click="EventoSoma" value="Soma ao clicar">
+
+                <br>
+
+                <h2>
+                    {{ result }}
+                </h2>      
+                
+                <hr>
+
+                <ul v-for="item in listaFake">
+                    <li>
+                        {{ item.id }} {{ item.text }}                                
+                    </li>
+
+                </ul>
+                    
+            </div>
+        
+        </div>
+    </div>  
+
+    <script>     
+       
+        new Vue({
+            el: "#app",
+            data: {
+                message: null,
+                variavel: null,
+                variavel2: null,
+                result: null,                   
+                listaFake: [
+                    { id: 1, text: 'Aprender JavaScript' },
+                    { id: 2, text: 'Aprender Vue' },
+                    { id: 3, text: 'Criar algo incrível' }
+                ], 
+
+            },
+            
+            methods: {
+                EventoSoma: function (events){       
+                    if (this.variavel == null || this.variavel2 == null)
+                        this.result = "Informe os valores";
+                    else                                
+                        this.result = parseInt(this.variavel) + parseInt(this.variavel2);                                                                
+                },              
+            }            
+        })      
+    
+
+    </script>
+
+</body>
+</html>

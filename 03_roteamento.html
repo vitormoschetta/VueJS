@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+</head>
+
+<body>
+
+    
+    <div id="app">
+
+    
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+    <script>   
+
+        const NotFound = { template: '<p>Página não encontrada</p>' }
+        const Home = { template: '<p>Página Inicial</p>' }
+        const About = { template: '<p>Sobre</p>' }
+
+        const routes = {
+            '/': Home,
+            '/sobre': About
+        }
+
+        new Vue({
+            el: '#app',
+            data: {
+                currentRoute: window.location.pathname
+            },
+            computed: {
+                ViewComponent () {
+                    return routes[this.currentRoute] || Home
+                }
+            },
+            render (h) { return h(this.ViewComponent) }
+        })
+
+    </script>
+
+</body>
+</html>
