@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>    
+    <div class="card">  
+        <div class="card-body">
+            
+            <div id="app">
+
+                <div>
+                    <!--aplica a class 'form-control' se a variavel 'isBootstrap' for 'true'-->
+                    <input type="text" v-bind:class="{ 'form-control': isBootstrap }" placeholder="isBootstrap">
+                </div>
+
+                <br>
+
+                <div>
+                    <!--aplica a class 'form-control' se a variavel 'isBootstrap2' for 'true'-->
+                    <input type="text" v-bind:class="{ 'form-control': isBootstrap02 }" placeholder="isBootstrap02">
+                </div>
+
+                <br>
+
+                <input type="button" value="Mudar style" v-on:click="Mudar()" class="btn btn-secondary">
+                
+            </div>
+        
+        </div>
+    </div>  
+
+    <script>     
+       
+        new Vue({
+            el: "#app",
+            data: {
+                isBootstrap: false, 
+                isBootstrap02: true, 
+            },
+
+            methods: {
+                Mudar: function() {
+                    if (this.isBootstrap)
+                        this.isBootstrap = false;
+                    else
+                        this.isBootstrap = true;
+                    
+                    if (this.isBootstrap02)
+                        this.isBootstrap02 = false;
+                    else
+                        this.isBootstrap02 = true;
+                }
+            }
+                       
+        })      
+    
+
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Primeiro SPA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>    
+    <div class="card">  
+        <div class="card-body">
+            
+            <div id="app">
+                <mycomponent></mycomponent>
+
+                <mycomponetTwo></mycomponetTwo>
+            </div>            
+
+        </div>
+    </div>  
+
+
+
+    <template id="mytemplate"> 
+        <div class="form-wrap container">
+            <div v-if="!enviado">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input v-model="email" 
+                            v-bind:class="{'form-control':true, 'is-invalid' : !validEmail(email) && emailBlured}"
+                            v-on:blur="emailBlured = true">
+    
+                    <div class="invalid-feedback">Digite um email válido</div>
+                </div>                                            
+                <a type="submit" href="#" v-on:click.stop.prevent="submit" class="btn btn-lg btn-success">Submit</a>                           
+            </div>
+            <div v-else class="alert alert-success" role="alert">
+                <h5>Obrigado</h5>
+                <p>Sua validação foi feita com sucesso!</p>
+            </div>
+        </div>
+    </template>
+
+    <script>     
+               
+       Vue.component('mycomponent', {
+            template: '#mytemplate', 
+            data: function () {
+                return {
+                    email : "", 
+                    emailBlured : false,
+                    valid : false, 
+                    enviado : false
+                }
+            },
+            methods : {
+                validate : function() {
+                    this.emailBlured = true;
+                    if( this.validEmail(this.email)){
+                        this.valid = true;
+                    }
+                },
+                validEmail : function(email) {
+                    var re = /(.+)@(.+){2,}\.(.+){2,}/;
+                    return re.test(email.toLowerCase());
+                },
+                submit : function() {                   
+                    this.validate();     
+                    if(this.valid){
+                        //THIS IS WHERE YOU SUBMIT DATA TO SERVER
+                        this.enviado = true;
+                    }
+                } //end submit
+            }
+        })
+
+        new Vue({
+            el: '#app'
+        })
+
+    </script>
+
+
+
+    <style>
+        .form-wrap {
+            padding-top:35px;
+        }
+        .alert {
+            padding-top:1.5rem;
+        }
+        .alert h5 {
+            margin-bottom:0.0rem;
+        }
+    </style>
+
+
+
+
+</body>
+</html>

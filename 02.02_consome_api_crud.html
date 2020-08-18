@@ -12,10 +12,32 @@
     <div class="card">  
         <div class="card-body">
 
-            <div id="app">
-                        
-                <input type="button" v-on:click="GetProducts" value="Mostrar Produtos">
-                <input type="button" v-on:click="CreateProduct()" value="Novo">
+            <div id="app">                                           
+                
+                <form>
+                    <input type="hidden" v-model="product.id">
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" v-model="product.name" placeholder="Digite aqui" >
+                        <small id="emailHelp" class="form-text text-muted">Escreva alguma observação aqui</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input type="text" class="form-control" v-model="product.price" placeholder="Apenas números">                        
+                    </div>         
+                    <div v-if="product.id">
+                        <button type="button" v-on:click="UpdateProduct()" class="btn btn-primary">Update</button>     
+                        <button type="button" v-on:click="Novo()" class="btn btn-success">Novo</button>          
+                    </div>      
+                    <div v-else>
+                        <button type="button" v-on:click="CreateProduct(product.name, product.price)" class="btn btn-success">Create</button>                             
+                    </div>                                       
+                </form>              
+                
+                <hr>
+
+                <input type="button" v-on:click="GetProducts" value="Mostrar Produtos">   
 
                 <table class="table table-hover table-sm">
                     <thead style="font-weight: bold;">
@@ -28,30 +50,18 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="product in lista">
-                            <td>{{ product.id }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.price }}</td>
+                        <tr v-for="item in lista">
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.price }}</td>
                             <td>
-                                <router-link :to="{name: 'edit_product', params: { id: product.id }}" class="btn btn-primary">Edit</router-link>
-                                <router-link :to="{name: 'delete_product', params: { id: product.id }}" class="btn btn-danger">Delete</router-link>                        
+                                <a v-on:click="GetProduct(item.id)" class="btn btn-primary">Edit</a>
+                                <a v-on:click="DeleteProduct(item.id)" class="btn btn-danger">Delete</a>                        
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
-                <hr>       
-
-
-                <div class="row">
-                    <div class="col">
-                        <input type="text" v-model="name">
-                        <input type="text" v-model="price">                
-                    </div>
-                    <div class="col">
-                        <input type="button" v-on:click="CreateProduct()" value="Create Product">
-                    </div>
-                </div>
+                                
             </div>
 
         </div>
@@ -62,39 +72,65 @@
 
         new Vue({
             el: "#app",
+
             data: {  
+                product: {
+                    id: null,
+                    name: null,
+                    price: null,
+                },                
                 lista: new Array(),                      
             },
             
             methods: {
+
+                Novo: function() {
+                    this.product.id = null;
+                    this.product.name = null;
+                    this.product.price = null;
+                },  
+
+                GerarGuid() {                   
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });                    
+                },
                 
+
+                //////////////////////////////////////// Consome API:
+
                 GetProducts: function (events) {
                     axios
                         .get('http://localhost/DefaultApiAndUi/api/product')
                         .then(response => (this.lista = response.data))        
-                        .catch(error => console.log(error))      
+                        .catch(error => console.log(error))                             
                 },
 
-                GetProduct: function (events, id) {
+                GetProduct: function (id) {                    
                     axios
                         .get('http://localhost/DefaultApiAndUi/api/product/' + id)
                         .then(response => (this.product = response.data))        
                         .catch(error => console.log(error))      
                 },
 
-                CreateProduct: function (events) {
-                    product = Product;
-                    product = {"name": this.name, "price": this.price}
-
+                CreateProduct: function (events) {                   
                     axios
-                        .post('http://localhost/DefaultApiAndUi/api/product/', product)
+                        .post(`http://localhost/DefaultApiAndUi/api/product?name=${this.product.name}&price=${this.product.price}`)
+                        .then(response => (this.product = response.data))        
+                        .catch(error => console.log(error))      
+                },                
+
+                UpdateProduct: function (events) {                                                           
+                    axios
+                        .put(`http://localhost/DefaultApiAndUi/api/product?id=${this.product.id}&name=${this.product.name}&price=${this.product.price}`)
                         .then(response => (this.product = response.data))        
                         .catch(error => console.log(error))      
                 },
 
-                DeleteProduct: function (events, id) {    
+                DeleteProduct: function (id) {    
                     axios
-                        .get('http://localhost/DefaultApiAndUi/api/product/' + id)
+                        .delete('http://localhost/DefaultApiAndUi/api/product/' + id)
                         .then(response => (this.product = response.data))        
                         .catch(error => console.log(error))          
                 },
