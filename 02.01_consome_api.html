@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Primeiro SPA</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>      
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -40,7 +39,8 @@
     </div>  
 
     
-    <script>          
+    <script>    
+        const uri = 'https://localhost:5001/api/product';        
 
         new Vue({
             el: "#app",
@@ -51,10 +51,10 @@
             methods: {
                 
                 GetProducts: function (events) {
-                    axios
-                        .get('http://localhost/DefaultApiAndUi/api/product')
-                        .then(response => (this.lista = response.data))        
-                        .catch(error => console.log(error))      
+                    fetch(uri)
+                    .then(response => response.json())
+                    .then(data => this.lista = data)
+                    .catch(error => alert('Dados não encontrados', error));     
                 },               
                 
             }

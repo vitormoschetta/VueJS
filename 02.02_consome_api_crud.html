@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Primeiro SPA</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>      
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -68,7 +67,10 @@
     </div>
 
     
-    <script>          
+    <script>      
+
+        //const uri = 'http://localhost/DefaultApiAndUi/api/product';  
+        const uri = 'https://localhost:5001/api/product';  
 
         new Vue({
             el: "#app",
@@ -78,8 +80,9 @@
                     id: null,
                     name: null,
                     price: null,
+                    expiration: null,
                 },                
-                lista: new Array(),                      
+                lista: [],                      
             },
             
             methods: {
@@ -88,6 +91,7 @@
                     this.product.id = null;
                     this.product.name = null;
                     this.product.price = null;
+                    this.product.expiration = null;
                 },  
 
                 GerarGuid() {                   
@@ -100,39 +104,61 @@
 
                 //////////////////////////////////////// Consome API:
 
-                GetProducts: function (events) {
-                    axios
-                        .get('http://localhost/DefaultApiAndUi/api/product')
-                        .then(response => (this.lista = response.data))        
-                        .catch(error => console.log(error))                             
+                GetProducts: function (events) {               
+                    fetch(uri)
+                    .then(response => response.json())
+                    .then(data => this.lista = data)
+                    .catch(error => alert('Dados não encontrados', error));                         
                 },
 
-                GetProduct: function (id) {                    
-                    axios
-                        .get('http://localhost/DefaultApiAndUi/api/product/' + id)
-                        .then(response => (this.product = response.data))        
-                        .catch(error => console.log(error))      
+
+                GetProduct: function (id) {            
+                    fetch(`${uri}/${id}`)
+                    .then(response => response.json())
+                    .then(data => this.product = data)
+                    .catch(error => alert('Dados não encontrados', error)); 
                 },
 
-                CreateProduct: function (events) {                   
-                    axios
-                        .post(`http://localhost/DefaultApiAndUi/api/product?name=${this.product.name}&price=${this.product.price}`)
-                        .then(response => (this.product = response.data))        
-                        .catch(error => console.log(error))      
+
+                CreateProduct: function (events) {     
+                    this.product.id = this.GerarGuid();                    
+
+                    fetch(uri, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.product)
+                    })
+                    .then(response => response.json())
+                    .then(() => {
+                        this.GetProducts();                            
+                    })
+                    .catch(error => console.error('Não foi possível adicionar o item.', error));
                 },                
 
-                UpdateProduct: function (events) {                                                           
-                    axios
-                        .put(`http://localhost/DefaultApiAndUi/api/product?id=${this.product.id}&name=${this.product.name}&price=${this.product.price}`)
-                        .then(response => (this.product = response.data))        
-                        .catch(error => console.log(error))      
+
+                UpdateProduct: function (events) {                                                                             
+                    fetch(`${uri}/${this.product.id}`, {
+                        method: 'PUT',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.product)
+                    })
+                    .then(() => this.GetProducts())
+                    .catch(error => console.error('Não foi possível atualizar o item.', error));
                 },
 
-                DeleteProduct: function (id) {    
-                    axios
-                        .delete('http://localhost/DefaultApiAndUi/api/product/' + id)
-                        .then(response => (this.product = response.data))        
-                        .catch(error => console.log(error))          
+
+                DeleteProduct: function (id) {                       
+                    fetch(`${uri}/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(() => this.GetProducts())
+                    .catch(error => console.error('Não foi possível deletar o item.', error)); 
                 },
                 
             }
